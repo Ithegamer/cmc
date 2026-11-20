@@ -96,26 +96,35 @@ function buildField(){
 }
 buildField();
 addEventListener('resize',buildField);
-hero.addEventListener('mousemove',e=>{const r=hero.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;});
-hero.addEventListener('mouseleave',()=>{mx=-9999;my=-9999;});
 const touchViewport=matchMedia('(max-width:1024px)');
-function isHeroTouch(e){return e.pointerType==='touch'||(touchViewport.matches&&e.pointerType==='pen');}
 function setHeroPointer(e){const r=hero.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;}
-hero.addEventListener('pointerdown',e=>{
-  if(!isHeroTouch(e))return;
-  setHeroPointer(e);ripple={x:mx,y:my,start:performance.now()};
-  if(reduced)drawField(0);
-});
+function startHeroRipple(x,y){mx=x;my=y;ripple={x,y,start:performance.now()};if(reduced)drawField(0);}
+function endHeroTouch(){mx=-9999;my=-9999;if(reduced)drawField(0);}
 hero.addEventListener('pointermove',e=>{
-  if(isHeroTouch(e)&&e.buttons)setHeroPointer(e);
+  if(e.pointerType==='mouse'||(e.pointerType==='pen'&&touchViewport.matches))setHeroPointer(e);
 });
-function endHeroTouch(e){
-  if(!isHeroTouch(e))return;
-  mx=-9999;my=-9999;
+hero.addEventListener('pointerleave',e=>{
+  if(e.pointerType==='mouse'){mx=-9999;my=-9999;}
+});
+hero.addEventListener('pointerdown',e=>{
+  if(e.pointerType!=='pen'||!touchViewport.matches)return;
+  setHeroPointer(e);startHeroRipple(mx,my);
+});
+addEventListener('pointerup',e=>{if(e.pointerType==='pen'&&touchViewport.matches)endHeroTouch();});
+addEventListener('pointercancel',e=>{if(e.pointerType==='pen'&&touchViewport.matches)endHeroTouch();});
+hero.addEventListener('touchstart',e=>{
+  const touch=e.changedTouches[0];if(!touch)return;
+  const r=hero.getBoundingClientRect();startHeroRipple(touch.clientX-r.left,touch.clientY-r.top);
+},{passive:true});
+hero.addEventListener('touchmove',e=>{
+  const touch=e.touches[0];if(!touch)return;
+  setHeroPointer(touch);
+  const now=performance.now();
+  if(!ripple||Math.hypot(mx-ripple.x,my-ripple.y)>40)ripple={x:mx,y:my,start:now};
   if(reduced)drawField(0);
-}
-addEventListener('pointerup',endHeroTouch);
-addEventListener('pointercancel',endHeroTouch);
+},{passive:true});
+hero.addEventListener('touchend',endHeroTouch,{passive:true});
+hero.addEventListener('touchcancel',endHeroTouch,{passive:true});
 function drawField(t){
   ctx.clearRect(0,0,W,H);
   const R=210;
