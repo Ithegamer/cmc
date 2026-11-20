@@ -140,7 +140,7 @@ if(finePointer){
     chY.style.transform=`translateX(${tx}px)`;
     const lat=(40.7128+(0.5-ty/innerHeight)*0.05).toFixed(5);
     const lon=Math.abs(-74.0060+(tx/innerWidth)*0.05).toFixed(5);
-    dFix.textContent=`N ${lat}° · W ${lon}°`;
+    if(dFix)dFix.textContent=`${lat}° N · ${lon}° W`;
     if(dLive)dLive.textContent=`${lat}° N · ${lon}° W`;
   },{passive:true});
   (function loop(){
