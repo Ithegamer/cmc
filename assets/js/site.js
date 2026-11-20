@@ -130,18 +130,14 @@ else{
   }).observe(hero);
 }
 
-/* ---------- instrument: square cursor, crosshair, datum ---------- */
+/* ---------- instrument: square cursor and crosshair ---------- */
 if(finePointer){
-  const cur=$('#cursor'),chX=$('#chX'),chY=$('#chY'),dFix=$('#datumFixed'),dLive=$('#datumLive');
+  const cur=$('#cursor'),chX=$('#chX'),chY=$('#chY');
   let tx=innerWidth/2,ty=innerHeight/2,cx=tx,cy=ty;
   addEventListener('mousemove',e=>{
     tx=e.clientX;ty=e.clientY;
     chX.style.transform=`translateY(${ty}px)`;
     chY.style.transform=`translateX(${tx}px)`;
-    const lat=(40.7128+(0.5-ty/innerHeight)*0.05).toFixed(5);
-    const lon=Math.abs(-74.0060+(tx/innerWidth)*0.05).toFixed(5);
-    dFix.textContent=`N ${lat}° · W ${lon}°`;
-    if(dLive)dLive.textContent=`${lat}° N · ${lon}° W`;
   },{passive:true});
   (function loop(){
     cx+=(tx-cx)*.2;cy+=(ty-cy)*.2;
