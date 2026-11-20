@@ -70,7 +70,7 @@ $('#mqTrack').innerHTML=mqHTML+mqHTML;
 /* ---------- hero canvas: the four-green bloom field ---------- */
 /* squares light in the logo's exact four-color, four-quadrant arrangement around the cursor */
 const cv=$('#heroCanvas'),ctx=cv.getContext('2d'),hero=$('#hero');
-let W,H,dpr,cells=[],mx=-9999,my=-9999,raf=null,heroVisible=true;
+let W,H,dpr,cells=[],mx=-9999,my=-9999,ripple=null,raf=null,heroVisible=true;
 const CELL=Math.max(50,Math.min(64,innerWidth/20));
 const G={
   mist:[201,223,192],   /* top-left of the mark  */
@@ -98,12 +98,41 @@ buildField();
 addEventListener('resize',buildField);
 hero.addEventListener('mousemove',e=>{const r=hero.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;});
 hero.addEventListener('mouseleave',()=>{mx=-9999;my=-9999;});
+const touchViewport=matchMedia('(max-width:1024px)');
+function isHeroTouch(e){return e.pointerType==='touch'||(touchViewport.matches&&e.pointerType==='pen');}
+function setHeroPointer(e){const r=hero.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;}
+hero.addEventListener('pointerdown',e=>{
+  if(!isHeroTouch(e))return;
+  setHeroPointer(e);ripple={x:mx,y:my,start:performance.now()};
+  if(reduced)drawField(0);
+});
+hero.addEventListener('pointermove',e=>{
+  if(isHeroTouch(e)&&e.buttons)setHeroPointer(e);
+});
+function endHeroTouch(e){
+  if(!isHeroTouch(e))return;
+  mx=-9999;my=-9999;
+  if(reduced)drawField(0);
+}
+addEventListener('pointerup',endHeroTouch);
+addEventListener('pointercancel',endHeroTouch);
 function drawField(t){
   ctx.clearRect(0,0,W,H);
   const R=210;
   for(const c of cells){
-    const dx=mx-c.x,dy=my-c.y,d=Math.hypot(dx,dy);
-    const inf=Math.max(0,1-d/R);
+    const hoverD=Math.hypot(mx-c.x,my-c.y);
+    const sourceX=mx>-1000?mx:(ripple?ripple.x:mx),sourceY=my>-1000?my:(ripple?ripple.y:my);
+    const dx=sourceX-c.x,dy=sourceY-c.y;
+    let inf=Math.max(0,1-hoverD/R);
+    if(ripple&&!reduced){
+      const progress=(t-ripple.start)/1200;
+      if(progress>=1)ripple=null;
+      else{
+        const radius=Math.max(0,progress)*(R+50);
+        const wave=Math.max(0,1-Math.abs(Math.hypot(ripple.x-c.x,ripple.y-c.y)-radius)/48);
+        inf=Math.max(inf,wave*(1-Math.max(0,progress)));
+      }
+    }
     const s=CELL*.3;
     if(inf>0.02){
       const col=quadColor(dx,dy);
