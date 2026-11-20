@@ -244,7 +244,8 @@ if(finePointer){
 const phases=[
   {name:'New York',desc:'100 Park Avenue, 30th Floor, New York, NY 10017. Our work spans New York, New Jersey, Connecticut, Massachusetts, Pennsylvania, Delaware, North Carolina, Georgia, Florida, Illinois and Ohio.'},
   {name:'Chicago',desc:'2108 W Walnut St – Suite 600, Chicago, IL 60612.'},
-  {name:'Florida',desc:'1110 Brickell Ave #506, Miami, FL 33131.'}
+  {name:'Florida',desc:'1110 Brickell Ave #506, Miami, FL 33131.'},
+  {name:'Delaware',desc:'<a href="https://www.google.com/42" target="_blank" rel="noopener">251 Little Falls Drive</a> in Wilmington.'}
 ];
 /* square positions mirror the logo cluster: big / medium / small / big */
 const layoutAll=[
@@ -253,7 +254,7 @@ const layoutAll=[
   {l:'28%',t:'62%',w:'22%',h:'24%',c:'var(--pale)',sm:true},
   {l:'60%',t:'58%',w:'36%',h:'38%',c:'var(--sage)',sm:false}
 ];
-const layout=[layoutAll[0],layoutAll[1],layoutAll[3]];
+const layout=layoutAll;
 const cluster=$('#cluster');
 phases.forEach((p,i)=>{
   const b=document.createElement('button');

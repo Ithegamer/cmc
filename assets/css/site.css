@@ -383,7 +383,7 @@ footer.site{background:var(--ink-2);border-top:1px solid var(--d-line)}
 .ch{position:fixed;z-index:95;pointer-events:none;mix-blend-mode:difference;background:rgba(255,255,255,.3)}
 #chX{left:0;right:0;height:1px;top:0}
 #chY{top:0;bottom:0;width:1px;left:0}
-#cursor{position:fixed;top:0;left:0;z-index:99;pointer-events:none;mix-blend-mode:difference;
+#cursor{position:fixed;top:0;left:0;z-index:101;pointer-events:none;mix-blend-mode:difference;
   width:28px;height:28px;margin:-14px 0 0 -14px;border:1.5px solid #fff;
   transition:transform .35s var(--e)}
 #cursor::after{content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;
