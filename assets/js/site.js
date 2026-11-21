@@ -131,9 +131,10 @@ hero.addEventListener('touchcancel',endHeroTouch,{passive:true});
 function drawField(t){
   ctx.clearRect(0,0,W,H);
   const R=210;
+  const sourceX=mx>-1000?mx:(ripple?ripple.x:mx),sourceY=my>-1000?my:(ripple?ripple.y:my);
   for(const c of cells){
     const hoverD=Math.hypot(mx-c.x,my-c.y);
-    const sourceX=mx>-1000?mx:(ripple?ripple.x:mx),sourceY=my>-1000?my:(ripple?ripple.y:my);
+    const proximity=mx>-1000?hoverD:ripple?Math.hypot(ripple.x-c.x,ripple.y-c.y):hoverD;
     const dx=sourceX-c.x,dy=sourceY-c.y;
     let inf=Math.max(0,1-hoverD/R);
     if(ripple&&!reduced){
@@ -148,9 +149,12 @@ function drawField(t){
     const s=CELL*.3;
     if(inf>0.02){
       const col=quadColor(dx,dy);
+      const distancePulse=(Math.sin(t*.004-proximity*.025)+1)*.5;
+      const sizeInfluence=inf*(.25+.75*distancePulse);
       const a=.12+.78*inf;
-      const sz=s*(1+inf*.85);
-      ctx.fillStyle=`rgba(${col[0]},${col[1]},${col[2]},${a})`;
+      const sz=s*(1+.8*sizeInfluence);
+      const brightness=1+.18*sizeInfluence;
+      ctx.fillStyle=`rgba(${Math.min(255,col[0]*brightness)},${Math.min(255,col[1]*brightness)},${Math.min(255,col[2]*brightness)},${a})`;
       ctx.fillRect(c.x-sz/2,c.y-sz/2,sz,sz);
     }else{
       const idle=reduced?0:(Math.sin(t*.0006+c.ph)*.5+.5);

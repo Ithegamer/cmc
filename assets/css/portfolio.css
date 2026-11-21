@@ -32,8 +32,12 @@
 .tile-open{display:inline-flex;align-items:center;gap:8px;margin-top:.8rem;font-family:var(--mono);font-size:9px;
   letter-spacing:.16em;text-transform:uppercase;color:var(--green-b)}
 .tile-open svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.5}
-@media(max-width:1024px){.portfolio-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:820px){.portfolio-intro-copy{align-items:flex-start;flex-direction:column;gap:1.5rem}}
+@media(max-width:1024px){
+  .portfolio-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:820px){
+  .portfolio-intro-copy{align-items:flex-start;flex-direction:column;gap:1.5rem}
+}
 @media(max-width:600px){
   .portfolio-intro{padding-top:145px}
   .portfolio-title{font-size:clamp(3rem,13vw,4.5rem)}
@@ -41,4 +45,7 @@
   .tile-copy h2{font-size:clamp(1rem,4vw,1.35rem)}
   .tile-location,.tile-fact{font-size:8px}
 }
-@media(hover:none){.tile-extra{max-height:12rem;opacity:1;transform:none;margin-top:.65rem}.tile-description{display:none}}
+@media(hover:none){
+  .tile-extra{max-height:12rem;opacity:1;transform:none;margin-top:.65rem}
+  .tile-description{display:none}
+}
