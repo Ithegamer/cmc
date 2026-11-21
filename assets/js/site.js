@@ -54,7 +54,10 @@ if('IntersectionObserver' in window){
 /* ---------- active nav ---------- */
 const navLinks=$$('.nav-link');
 const secIO=new IntersectionObserver(es=>es.forEach(e=>{
-  if(e.isIntersecting) navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id));
+  if(e.isIntersecting) navLinks.forEach(a=>{
+    const href=a.getAttribute('href');
+    a.classList.toggle('active',href==='#'+e.target.id||(e.target.id==='portfolio'&&href==='portfolio.html'));
+  });
 }),{rootMargin:'-40% 0px -55% 0px'});
 ['firm','disciplines','method','portfolio','contact'].forEach(id=>{const s=document.getElementById(id);if(s)secIO.observe(s);});
 
