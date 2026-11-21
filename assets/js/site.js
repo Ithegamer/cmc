@@ -54,7 +54,8 @@ if('IntersectionObserver' in window){
 /* ---------- active nav ---------- */
 const navLinks=$$('.nav-link');
 const secIO=new IntersectionObserver(es=>es.forEach(e=>{
-  if(e.isIntersecting) navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id));
+  if(e.isIntersecting) navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id||
+    (e.target.id==='portfolio'&&a.getAttribute('href')==='portfolio.html')));
 }),{rootMargin:'-40% 0px -55% 0px'});
 ['firm','disciplines','method','portfolio','contact'].forEach(id=>{const s=document.getElementById(id);if(s)secIO.observe(s);});
 
@@ -128,9 +129,10 @@ hero.addEventListener('touchcancel',endHeroTouch,{passive:true});
 function drawField(t){
   ctx.clearRect(0,0,W,H);
   const R=210;
+  const sourceX=mx>-1000?mx:(ripple?ripple.x:mx),sourceY=my>-1000?my:(ripple?ripple.y:my);
   for(const c of cells){
     const hoverD=Math.hypot(mx-c.x,my-c.y);
-    const sourceX=mx>-1000?mx:(ripple?ripple.x:mx),sourceY=my>-1000?my:(ripple?ripple.y:my);
+    const proximity=mx>-1000?hoverD:ripple?Math.hypot(ripple.x-c.x,ripple.y-c.y):hoverD;
     const dx=sourceX-c.x,dy=sourceY-c.y;
     let inf=Math.max(0,1-hoverD/R);
     if(ripple&&!reduced){
@@ -145,9 +147,12 @@ function drawField(t){
     const s=CELL*.3;
     if(inf>0.02){
       const col=quadColor(dx,dy);
+      const distancePulse=(Math.sin(t*.004-proximity*.025)+1)*.5;
+      const sizeInfluence=inf*(.25+.75*distancePulse);
       const a=.12+.78*inf;
-      const sz=s*(1+inf*.85);
-      ctx.fillStyle=`rgba(${col[0]},${col[1]},${col[2]},${a})`;
+      const sz=s*(1+.8*sizeInfluence);
+      const brightness=1+.18*sizeInfluence;
+      ctx.fillStyle=`rgba(${Math.min(255,col[0]*brightness)},${Math.min(255,col[1]*brightness)},${Math.min(255,col[2]*brightness)},${a})`;
       ctx.fillRect(c.x-sz/2,c.y-sz/2,sz,sz);
     }else{
       const idle=reduced?0:(Math.sin(t*.0006+c.ph)*.5+.5);
@@ -170,16 +175,12 @@ else{
 
 /* ---------- instrument: square cursor and crosshair ---------- */
 if(finePointer){
-  const cur=$('#cursor'),chX=$('#chX'),chY=$('#chY'),dFix=$('#datumFixed'),dLive=$('#datumLive');
+  const cur=$('#cursor'),chX=$('#chX'),chY=$('#chY');
   let tx=innerWidth/2,ty=innerHeight/2,cx=tx,cy=ty;
   addEventListener('mousemove',e=>{
     tx=e.clientX;ty=e.clientY;
     chX.style.transform=`translateY(${ty}px)`;
     chY.style.transform=`translateX(${tx}px)`;
-    const lat=(40.7128+(0.5-ty/innerHeight)*0.05).toFixed(5);
-    const lon=Math.abs(-74.0060+(tx/innerWidth)*0.05).toFixed(5);
-    if(dFix)dFix.textContent=`${lat}° N · ${lon}° W`;
-    if(dLive)dLive.textContent=`${lat}° N · ${lon}° W`;
   },{passive:true});
   (function loop(){
     cx+=(tx-cx)*.2;cy+=(ty-cy)*.2;
