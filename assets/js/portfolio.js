@@ -11,7 +11,8 @@ grid.innerHTML=projects.map((project,index)=>{
     :`<img src="${project.photos[0]}" alt="${project.name} project photo" loading="lazy">`;
   const fact=firstDetail?`<p class="tile-fact">${firstDetail[0]} · ${firstDetail[1]}</p>`:'';
   const description=project.description?`<p class="tile-description">${project.description}</p>`:'';
-  return `<a class="portfolio-tile${project.placeholder?' portfolio-tile-numbered':''}" href="project.html?slug=${encodeURIComponent(project.slug)}" aria-label="Open ${project.name} project details">
+  return `<div class="portfolio-cell">
+  <a class="portfolio-tile${project.placeholder?' portfolio-tile-numbered':''}" href="project.html?slug=${encodeURIComponent(project.slug)}" aria-label="Open ${project.name} project details">
     ${visual}
     <span class="tile-index">${String(index+1).padStart(2,'0')} / ${String(projects.length).padStart(2,'0')}</span>
     <div class="tile-copy">
@@ -25,6 +26,7 @@ grid.innerHTML=projects.map((project,index)=>{
         </span>
       </div>
     </div>
-  </a>`;
+  </a>
+  </div>`;
 }).join('');
 })();
